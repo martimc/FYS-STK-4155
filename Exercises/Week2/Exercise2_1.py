@@ -37,28 +37,28 @@ def R2(y, y_tilde):
     return 1- np.sum((y-y_tilde)**2)/np.sum((y-np.mean(y))**2)
 
 np.random.seed(4155)
-N = 1000
+N = 200
 x = np.random.rand(N)
 
 x_sort = np.sort(x)
-y = 2.0 + 5*x_sort*x_sort + 0.5*np.random.randn(N)
+y = 2.0 + 5*np.tan(x_sort) + 0.2*np.random.randn(N)
 yreal = 2.0 + 5*x_sort*x_sort
 
-dim = np.linspace(2,19,18)
-Test_err = np.zeros(len(dim))
-Train_err = np.zeros(len(dim))
+maxdim = 100
+Test_err = np.zeros(maxdim)
+Train_err = np.zeros(maxdim)
 i = 0
 
-for p in range(2,20):
+for p in range(1,maxdim+1):
 
-    X = np.ones((len(x_sort), p))
+    X = np.ones((len(x_sort), p+1))
 
-    for j in range(p):
+    for j in range(p+1):
         X[:,j] = (x_sort)**j
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
 
-    OLSbeta = np.linalg.inv(x_train.T@x_train)@x_train.T@y_train
+    OLSbeta = np.linalg.pinv(x_train)@y_train
 
     ytilde_OLS = x_train@OLSbeta
 
@@ -72,8 +72,9 @@ for p in range(2,20):
     print("test MLS for OLS: ", MSE(y_test, ypred_OLS))
     print(" ")
     i += 1
-
+dim = np.arange(1,maxdim+1)
 plt.plot(dim, Test_err, label='test error')
 plt.plot(dim, Train_err, label='train_err')
 plt.legend()
+plt.semilogy()
 plt.show()

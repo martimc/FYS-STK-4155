@@ -1,0 +1,8 @@
+anagrams: 
+1
+2
+3
+ 
+palindromes: 
+8
+9

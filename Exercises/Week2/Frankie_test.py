@@ -77,12 +77,11 @@ z_matrix = FrankeFunction(X, Y)
 z = np.ravel(z_matrix)
 
 X_D = create_X(X, Y, n=n)
-print(X_D.shape, z.shape)
 
 # split in training and test data
 X_train, X_test, y_train, y_test = train_test_split(X_D,z,test_size=0.25)
-print(X_train.shape, y_train.shape)
 
+"""
 OLSbeta = np.linalg.inv(X_train.T @ X_train) @ X_train.T @ y_train
 ytilde_OLS = X_train@OLSbeta
 
@@ -96,14 +95,14 @@ print("MSE test before scale: ", MSE(y_test, ypred_OLS))
 print("R2 test before scale: ", R2(y_test, ypred_OLS))
 
 scaler = StandardScaler()
-scaler.fit(X_train[:, 1:])
-X_train_scaled = scaler.transform(X_train[:, 1:])
-X_test_scaled = scaler.transform(X_test[:, 1:])
+scaler.fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
-ones_train = np.ones((len(y_train), 1))
-ones_test = np.ones((len(y_test), 1))
-X_train_scaled = np.hstack((ones_train, X_train_scaled))
-X_test_scaled = np.hstack((ones_test, X_test_scaled))
+ones_train = np.ones((len(y_train)))
+ones_test = np.ones((len(y_test)))
+X_train_scaled[:,0] = ones_train
+X_test_scaled[:,0] = ones_test
 
 OLSbeta_scale = np.linalg.inv(X_train_scaled.T@X_train_scaled)@X_train_scaled.T@y_train
 ytilde_scale = X_train_scaled@OLSbeta_scale
@@ -116,9 +115,9 @@ print("------------")
 
 print("MSE test after scale: ", MSE(y_test, ypred_scale))
 print("R2 test after scale: ", R2(y_test, ypred_scale))
-
-
 """
+
+
 print("Sklearn fitting: ")
 clf = skl.LinearRegression().fit(X_train, y_train)
 
@@ -129,6 +128,11 @@ print("R2 score before scaling {:.5f}".format(clf.score(X_test,y_test)))
 print("Feature min values before scaling:\n {}".format(X_train.min(axis=0)))
 print("Feature max values before scaling:\n {}".format(X_train.max(axis=0)))
 
+scaler = StandardScaler()
+scaler.fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
 print("Feature min values after scaling:\n {}".format(X_train_scaled.min(axis=0)))
 print("Feature max values after scaling:\n {}".format(X_train_scaled.max(axis=0)))
 
@@ -136,7 +140,7 @@ clf = skl.LinearRegression().fit(X_train_scaled, y_train)
 
 
 print("MSE after  scaling: {:.5f}".format(mean_squared_error(clf.predict(X_test_scaled), y_test)))
-print("R2 score for  scaled data: {:.5f}".format(clf.score(X_test_scaled,y_test)))"""
+print("R2 score for  scaled data: {:.5f}".format(clf.score(X_test_scaled,y_test)))
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')

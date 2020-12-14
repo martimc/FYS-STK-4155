@@ -6,6 +6,7 @@ def terminate(u, t, step_no):
 
 class SolverPDE(object):
     def __init__(self, u0, x0, xL, dx):
+        #initializing the solver class
         if isinstance(u0, (float,int)):
             self.neq = 1
             u0 = float(u0)
@@ -18,7 +19,6 @@ class SolverPDE(object):
         self.xL = xL
 
         self.dx = dx
-        #self.f = lambda u, t: np.asarray(f(u, t), float)
 
     def advance(self):
         raise NotImplementedError
@@ -35,6 +35,7 @@ class SolverPDE(object):
         self.u[0] = np.concatenate(([self.x0],self.u0,[self.xL]))
 
         for k in range(n-1):
+            #updating u(x,t) through the self.advance
             self.k = k
             self.u[k+1] = self.advance()
             if terminate(self.u, self.t, self.k):
@@ -43,6 +44,7 @@ class SolverPDE(object):
 
 
 class Explicit_ForwardEuler(SolverPDE):
+    #implementing forward euler scheme
     def advance(self):
         u, k, t = self.u, self.k, self.t
         u = u[k, 1:-1] + self.dt/self.dx**2 * (u[k, :-2] - 2*u[k, 1:-1] + u[k, 2:])

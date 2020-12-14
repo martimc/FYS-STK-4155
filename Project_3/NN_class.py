@@ -7,6 +7,7 @@ from mpl_toolkits.mplot3d import axes3d
 
 class Neural_Network:
     def __init__(self, X, t, num_neurons, epochs, gamma):
+        #initializing the solver class
         self.X_data = X
         self.t_data = t
         self.gamma = gamma
@@ -19,6 +20,7 @@ class Neural_Network:
         self.initialize_deep_param()
 
     def initialize_deep_param(self):
+        #initializing the deep parameters using random numbers
         self.N_hidden = np.size(self.num_neurons)
 
         self.P = [None]*(self.N_hidden+1)
@@ -29,12 +31,15 @@ class Neural_Network:
         self.P[-1] = npr.randn(1, self.num_neurons[-1] + 1)
 
     def sigmoid(self, z):
+        #activation function
         return 1/(1 + np.exp(-z))
 
     def f(self, x):
         return np.sin(np.pi*x)
 
     def trial_func(self, point, P):
+        #trial function that is used to calculate x,t and to update the
+        #deep parameters
         x,t = point
         return (1-t)*self.f(x) + x*(1-x)*t*self.feed_forward(P,point)
 
@@ -60,6 +65,8 @@ class Neural_Network:
         return cost_sum /( np.size(X)*np.size(T) )
 
     def feed_forward(self, P, point):
+        #the feed forward algorithm
+
         num_coords = np.size(point,0)
         x = point.reshape(num_coords, -1)
 
@@ -102,6 +109,8 @@ class Neural_Network:
         cost_func_grad = grad(self.cost_func, 0)
 
         for j in range(self.iter):
+            #back propagation by finding the gradient of the cost function
+            #and updating the deep parameters
             cost_grad = cost_func_grad(self.P, self.X_data, self.t_data)
 
             for l in range(self.N_hidden+1):
